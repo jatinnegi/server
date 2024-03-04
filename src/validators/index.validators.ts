@@ -22,7 +22,8 @@ const withValidation =
 export const UserRegisterValidation = [
   body("firstName").notEmpty().withMessage("First name is required"),
   body("lastName").notEmpty().withMessage("Last name is required"),
-  body("email").isEmail().withMessage("Email is required"),
+  body("email").isEmail().withMessage("Enter a valid email"),
+  body("email").notEmpty().withMessage("Email is required"),
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be 6 characters long"),

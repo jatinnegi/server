@@ -1,7 +1,23 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-const UserSchema = new mongoose.Schema(
+interface UserDocument extends Document {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  profilePicture: string;
+  phoneNumber: string;
+  country: string;
+  state: string;
+  city: string;
+  address: string;
+  zipCode: string;
+  generateAuthToken: () => string;
+}
+
+const UserSchema = new mongoose.Schema<UserDocument>(
   {
     firstName: {
       type: String,
@@ -20,7 +36,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    profilePictur: {
+    profilePicture: {
       type: String,
       required: false,
       default:
@@ -43,6 +59,14 @@ const UserSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+UserSchema.methods.generateAuthToken = function () {
+  const token = jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "30m",
+  });
+
+  return token;
+};
 
 UserSchema.pre("save", async function (next) {
   const hashedPassword = bcrypt.hashSync(this.password, 10);

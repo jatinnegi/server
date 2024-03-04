@@ -1,8 +1,14 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
+import { IBodyRequest } from "@/contracts/request";
+import { RegisterPayload } from "@/contracts/user";
 import UserModel from "@/models/User.model";
 
 const userController = {
-  async register(req: Request, res: Response, next: NextFunction) {
+  async register(
+    req: IBodyRequest<RegisterPayload>,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const { firstName, lastName, email, password } = req.body;
       const userExists = await UserModel.findOne({ email });
@@ -18,7 +24,9 @@ const userController = {
         password,
       });
 
-      return res.status(200).json(user);
+      const token = user.generateAuthToken();
+
+      return res.status(200).json({ token });
     } catch (error) {
       next(error);
     }
