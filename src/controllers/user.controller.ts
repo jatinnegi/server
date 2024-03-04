@@ -1,9 +1,36 @@
 import { Response, NextFunction } from "express";
 import { IBodyRequest } from "@/contracts/request";
-import { RegisterPayload } from "@/contracts/user";
+import { LoginPayload, RegisterPayload } from "@/contracts/user";
 import UserModel from "@/models/User.model";
 
 const userController = {
+  async login(
+    req: IBodyRequest<LoginPayload>,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { email, password } = req.body;
+      const user = await UserModel.findOne({ email });
+
+      if (!user) {
+        return res.status(400).json({ error: "Invalid credentials" });
+      }
+
+      const match = user.comparePassword(password);
+
+      if (!match) {
+        return res.status(400).json({ error: "Invalid credentials" });
+      }
+
+      const token = user.generateAuthToken();
+
+      return res.status(200).json({ token });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async register(
     req: IBodyRequest<RegisterPayload>,
     res: Response,

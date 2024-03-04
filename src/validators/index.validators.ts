@@ -19,6 +19,11 @@ const withValidation =
     next();
   };
 
+export const UserLoginValidation = [
+  body("email").notEmpty().withMessage("Email is required"),
+  body("password").notEmpty().withMessage("Password is required"),
+];
+
 export const UserRegisterValidation = [
   body("firstName").notEmpty().withMessage("First name is required"),
   body("lastName").notEmpty().withMessage("Last name is required"),

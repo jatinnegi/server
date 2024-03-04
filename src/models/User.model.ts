@@ -15,6 +15,7 @@ interface UserDocument extends Document {
   address: string;
   zipCode: string;
   generateAuthToken: () => string;
+  comparePassword: (password: string) => boolean;
 }
 
 const UserSchema = new mongoose.Schema<UserDocument>(
@@ -66,6 +67,13 @@ UserSchema.methods.generateAuthToken = function () {
   });
 
   return token;
+};
+
+UserSchema.methods.comparePassword = function (password: string) {
+  const hashedPassword = this.password;
+  const match = bcrypt.compareSync(password, hashedPassword);
+
+  return match;
 };
 
 UserSchema.pre("save", async function (next) {
