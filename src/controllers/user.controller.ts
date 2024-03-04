@@ -1,9 +1,17 @@
-import { Response, NextFunction } from "express";
+import { Request, Response, NextFunction } from "express";
 import { IBodyRequest } from "@/contracts/request";
 import { LoginPayload, RegisterPayload } from "@/contracts/user";
 import UserModel from "@/models/User.model";
 
 const userController = {
+  async getUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { user } = req.context;
+      return res.status(200).json(user);
+    } catch (error) {
+      next(error);
+    }
+  },
   async login(
     req: IBodyRequest<LoginPayload>,
     res: Response,

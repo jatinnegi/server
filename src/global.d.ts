@@ -1,3 +1,13 @@
+interface JWTUser {
+  id: string;
+}
+
+namespace Express {
+  interface Request {
+    context: Context;
+  }
+}
+
 namespace NodeJS {
   interface ProcessEnv {
     PORT: number;

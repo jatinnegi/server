@@ -76,6 +76,12 @@ UserSchema.methods.comparePassword = function (password: string) {
   return match;
 };
 
+UserSchema.methods.toJSON = function () {
+  const userObject = this.toObject();
+  delete userObject.password;
+  return userObject;
+};
+
 UserSchema.pre("save", async function (next) {
   const hashedPassword = bcrypt.hashSync(this.password, 10);
   this.password = hashedPassword;
