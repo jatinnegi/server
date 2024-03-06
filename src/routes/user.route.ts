@@ -3,8 +3,8 @@ import withValidation, {
   UserLoginValidation,
   UserRegisterValidation,
 } from "@/validators/index.validators";
-import authGuards from "@/guards";
-import userController from "@/controllers/user.controller";
+import * as authGuards from "@/guards";
+import * as userController from "@/controllers/user.controller";
 
 const router = Router();
 
@@ -21,5 +21,6 @@ router.post(
   withValidation(UserRegisterValidation),
   userController.register
 );
+router.post("/logout", authGuards.isAuth, userController.logout);
 
 export default router;

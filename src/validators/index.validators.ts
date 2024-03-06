@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { body, validationResult, ValidationChain } from "express-validator";
 import { cleanErrors } from "@/utils";
+import UserModel from "@/models/User.model";
 
 const withValidation =
   (validations: ValidationChain[]) =>
@@ -13,7 +14,10 @@ const withValidation =
 
     if (!errors.isEmpty()) {
       const cleanedErrors = cleanErrors(errors.array());
-      return res.status(400).json(cleanedErrors);
+      return res.status(400).json({
+        type: "VaidationErrors",
+        errors: cleanedErrors,
+      });
     }
 
     next();
@@ -27,6 +31,17 @@ export const UserLoginValidation = [
 export const UserRegisterValidation = [
   body("firstName").notEmpty().withMessage("First name is required"),
   body("lastName").notEmpty().withMessage("Last name is required"),
+  body("email").custom((value) => {
+    return new Promise(async (resolve, reject) => {
+      const user = await UserModel.findOne({ email: value });
+
+      if (user) {
+        reject(new Error("Email is already taken"));
+      } else {
+        resolve(true);
+      }
+    });
+  }),
   body("email").isEmail().withMessage("Enter a valid email"),
   body("email").notEmpty().withMessage("Email is required"),
   body("password")

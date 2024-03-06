@@ -1,23 +1,28 @@
 import { Request, Response, NextFunction } from "express";
+import asyncHandler from "express-async-handler";
 
-export default {
-  isGuest(req: Request, res: Response, next: NextFunction) {
+export const isGuest = asyncHandler(
+  (req: Request, res: Response, next: NextFunction) => {
     const user = req.context;
 
     if (!user) {
-      return next();
+      next();
+    } else {
+      res.status(403);
+      throw new Error("Forbidden");
     }
+  }
+);
 
-    return res.status(403).json({ error: "Forbidden" });
-  },
-
-  isAuth(req: Request, res: Response, next: NextFunction) {
+export const isAuth = asyncHandler(
+  (req: Request, res: Response, next: NextFunction) => {
     const user = req.context;
 
-    if (!user) {
-      return res.status(403).json({ error: "Forbidden" });
+    if (user) {
+      next();
+    } else {
+      res.status(403);
+      throw new Error("Forbidden");
     }
-
-    next();
-  },
-};
+  }
+);

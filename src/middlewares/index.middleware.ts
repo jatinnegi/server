@@ -1,49 +1,48 @@
 import { Request, Response, NextFunction } from "express";
-import { getAccessTokenFromHeaders, jwtVerify } from "@/utils";
+import { jwtVerify } from "@/utils";
 import UserModel from "@/models/User.model";
+import asyncHandler from "express-async-handler";
 
-export const authMiddleware = async (
+export const authMiddleware = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.cookies.jwt;
+
+    if (token) {
+      const { id } = jwtVerify(token);
+      if (!id) {
+        next();
+      } else {
+        const user = await UserModel.findById(id);
+        req.context = user;
+        next();
+      }
+    } else {
+      next();
+    }
+  }
+);
+
+export const notFoundMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    req.context = null;
-
-    const accessToken = getAccessTokenFromHeaders(req.headers);
-    if (!accessToken) {
-      return next();
-    }
-
-    const { id } = jwtVerify(accessToken);
-
-    if (!id) {
-      return next();
-    }
-
-    const user = await UserModel.findById(id);
-
-    if (!user) {
-      return next();
-    }
-
-    req.context = {
-      user,
-      accessToken,
-    };
-
-    next();
-  } catch (error) {
-    return res.status(500).json(error);
-  }
+  const error = new Error(`Not found - ${req.originalUrl}`);
+  res.status(404);
+  next(error);
 };
 
-export const errorMiddleware = (
-  error: Error,
+export const errorHandlerMiddleware = (
+  err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  console.error(error);
-  return res.status(500).send("Something went wrong!");
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  const error = err.message;
+
+  res.status(statusCode).json({
+    error,
+    stack: process.env.NODE_ENV === "development" ? err.stack : null,
+  });
 };

@@ -10,15 +10,6 @@ export const cleanErrors = (errors: any[]): Record<string, string> => {
   return cleanedErrors;
 };
 
-export const getAccessTokenFromHeaders = ({
-  authorization,
-}: {
-  authorization?: string;
-}) => {
-  const accessToken = authorization?.split(" ")[1];
-  return accessToken;
-};
-
 export const jwtVerify = (accessToken: string) => {
   const payload = jwt.verify(
     accessToken,
