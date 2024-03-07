@@ -24,7 +24,7 @@ app.use((0, cors_1.default)({
     optionsSuccessStatus: 200,
 }));
 app.use(index_middleware_1.authMiddleware);
-app.use("/", (req, res) => {
+app.get("/", (req, res) => {
     res.status(200).json({ message: "StackDrive Restful API 🚀" });
 });
 app.use("/api", index_route_1.default);
