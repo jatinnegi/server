@@ -14,5 +14,3 @@ process.on("uncaughtException", (err: Error) => {
   console.error(err);
   process.exit(1);
 });
-
-export default app;
