@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -28,6 +28,9 @@ app.use(
   })
 );
 app.use(authMiddleware);
+app.use("/", (req: Request, res: Response) => {
+  res.status(200).json({ message: "StackDrive Restful API 🚀" });
+});
 app.use("/api", routes);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
