@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "scripts": {
     "dev": "ts-node-dev --files --respawn --inspect -r tsconfig-paths/register ./src",
-    "build": "tsc && tsc-alias"
+    "build": "rimraf dist && tsc && tsc-alias",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist"
   },
   "keywords": [],
   "author": "",
