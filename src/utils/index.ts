@@ -1,3 +1,5 @@
+import { isDevelopment } from "@/config";
+import { Response } from "express";
 import jwt from "jsonwebtoken";
 
 export const cleanErrors = (errors: any[]): Record<string, string> => {
@@ -8,6 +10,19 @@ export const cleanErrors = (errors: any[]): Record<string, string> => {
   }
 
   return cleanedErrors;
+};
+
+export const generateAuthToken = (id: string, res: Response) => {
+  const token = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "30m",
+  });
+
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: !isDevelopment,
+    sameSite: "strict",
+    maxAge: 30 * 60 * 1000,
+  });
 };
 
 export const jwtVerify = (accessToken: string) => {

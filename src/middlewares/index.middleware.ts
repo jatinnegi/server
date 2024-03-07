@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { jwtVerify } from "@/utils";
 import UserModel from "@/models/User.model";
 import asyncHandler from "express-async-handler";
+import { isDevelopment } from "@/config";
 
 export const authMiddleware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -43,6 +44,6 @@ export const errorHandlerMiddleware = (
 
   res.status(statusCode).json({
     error,
-    stack: process.env.NODE_ENV === "development" ? err.stack : null,
+    stack: isDevelopment ? err.stack : null,
   });
 };

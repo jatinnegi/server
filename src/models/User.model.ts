@@ -1,7 +1,5 @@
-import { Response } from "express";
 import mongoose, { Document } from "mongoose";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 
 interface UserDocument extends Document {
   firstName: string;
@@ -15,7 +13,6 @@ interface UserDocument extends Document {
   city: string;
   address: string;
   zipCode: string;
-  generateAuthToken: (res: Response) => void;
   comparePassword: (password: string) => boolean;
 }
 
@@ -61,19 +58,6 @@ const UserSchema = new mongoose.Schema<UserDocument>(
     timestamps: true,
   }
 );
-
-UserSchema.methods.generateAuthToken = function (res: Response) {
-  const token = jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "30m",
-  });
-
-  res.cookie("jwt", token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
-    sameSite: "strict",
-    maxAge: 30 * 60 * 1000,
-  });
-};
 
 UserSchema.methods.comparePassword = function (password: string) {
   const hashedPassword = this.password;

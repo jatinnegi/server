@@ -3,6 +3,7 @@ import { IBodyRequest } from "@/contracts/request";
 import { LoginPayload, RegisterPayload } from "@/contracts/user";
 import asyncHandler from "express-async-handler";
 import UserModel from "@/models/User.model";
+import { generateAuthToken } from "@/utils";
 
 export const getUser = asyncHandler((req: Request, res: Response) => {
   const user = req.context;
@@ -24,7 +25,7 @@ export const login = asyncHandler(
       throw new Error("Invalid credentials");
     }
 
-    user.generateAuthToken(res);
+    generateAuthToken(user._id.toString(), res);
 
     res.status(200).json(user);
   }
@@ -41,13 +42,13 @@ export const register = asyncHandler(
       password,
     });
 
-    user.generateAuthToken(res);
+    generateAuthToken(user._id.toString(), res);
 
     res.status(201).json(user);
   }
 );
 
 export const logout = asyncHandler((req: Request, res: Response) => {
-  res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
+  res.cookie("jwt", "", { expires: new Date(0) });
   res.status(200).json({ message: "User logged out" });
 });
