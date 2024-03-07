@@ -28,7 +28,7 @@ app.use(
   })
 );
 app.use(authMiddleware);
-app.use("/", (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
   res.status(200).json({ message: "StackDrive Restful API 🚀" });
 });
 app.use("/api", routes);
