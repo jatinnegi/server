@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { IBodyRequest } from "@/contracts/request";
 import { LoginPayload, RegisterPayload } from "@/contracts/user";
 import asyncHandler from "express-async-handler";

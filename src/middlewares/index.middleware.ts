@@ -8,16 +8,22 @@ export const authMiddleware = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.jwt;
 
-    if (token) {
-      const { id } = jwtVerify(token);
-      if (!id) {
-        next();
+    try {
+      if (token) {
+        const { id } = jwtVerify(token);
+        if (!id) {
+          next();
+        } else {
+          const user = await UserModel.findById(id);
+          req.context = user;
+          next();
+        }
       } else {
-        const user = await UserModel.findById(id);
-        req.context = user;
         next();
       }
-    } else {
+    } catch (err) {
+      console.error(err);
+      res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
       next();
     }
   }

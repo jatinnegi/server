@@ -31,15 +31,17 @@ const UserSchema = new mongoose_1.default.Schema({
     phoneNumber: {
         type: String,
         required: false,
+        default: "",
     },
     country: {
         type: String,
         required: false,
+        default: "",
     },
-    state: { type: String, required: false },
-    city: { type: String, required: false },
-    address: { type: String, required: false },
-    zipCode: { type: String, required: false },
+    state: { type: String, required: false, default: "" },
+    city: { type: String, required: false, default: "" },
+    address: { type: String, required: false, default: "" },
+    zipCode: { type: String, required: false, default: "" },
 }, {
     timestamps: true,
 });

@@ -10,18 +10,25 @@ const express_async_handler_1 = __importDefault(require("express-async-handler")
 const config_1 = require("../config");
 exports.authMiddleware = (0, express_async_handler_1.default)(async (req, res, next) => {
     const token = req.cookies.jwt;
-    if (token) {
-        const { id } = (0, utils_1.jwtVerify)(token);
-        if (!id) {
-            next();
+    try {
+        if (token) {
+            const { id } = (0, utils_1.jwtVerify)(token);
+            if (!id) {
+                next();
+            }
+            else {
+                const user = await User_model_1.default.findById(id);
+                req.context = user;
+                next();
+            }
         }
         else {
-            const user = await User_model_1.default.findById(id);
-            req.context = user;
             next();
         }
     }
-    else {
+    catch (err) {
+        console.error(err);
+        res.cookie("jwt", "", { httpOnly: true, expires: new Date(0) });
         next();
     }
 });
