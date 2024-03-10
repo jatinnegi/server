@@ -1,16 +1,18 @@
 import { Request, Response } from "express";
 import { IBodyRequest } from "@/contracts/request";
-import { LoginPayload, RegisterPayload } from "@/contracts/user";
+import { LoginPayload, RegisterPayload, UpdatePayload } from "@/contracts/user";
+import { generateAuthToken, wait } from "@/utils";
 import asyncHandler from "express-async-handler";
 import UserModel from "@/models/User.model";
-import { generateAuthToken } from "@/utils";
 
-export const getUser = asyncHandler((req: Request, res: Response) => {
-  const user = req.context;
+export const getUser = asyncHandler(async (req: Request, res: Response) => {
+  const id = req.context;
 
-  if (!user) {
-    throw new Error("No user found");
+  if (!id) {
+    throw new Error("No user ID found");
   }
+
+  const user = await UserModel.findById(id);
 
   res.status(200).json(user);
 });
@@ -26,6 +28,8 @@ export const login = asyncHandler(
     }
 
     generateAuthToken(user._id.toString(), res);
+
+    await wait(3500);
 
     res.status(200).json(user);
   }
@@ -45,6 +49,33 @@ export const register = asyncHandler(
     generateAuthToken(user._id.toString(), res);
 
     res.status(201).json(user);
+  }
+);
+
+export const update = asyncHandler(
+  async (req: IBodyRequest<UpdatePayload>, res: Response) => {
+    const id = req.context;
+    const { countryCode, phoneNumber, city, state, address, zipCode } =
+      req.body;
+
+    const user = await UserModel.findById(id);
+
+    if (!user) {
+      throw new Error("No user found");
+    }
+
+    user.countryCode = countryCode || user.countryCode;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.city = city || user.city;
+    user.state = state || user.state;
+    user.address = address || user.address;
+    user.zipCode = zipCode || user.zipCode;
+
+    await user.save();
+
+    await wait(3500);
+
+    res.status(200).json(user);
   }
 );
 

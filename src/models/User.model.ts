@@ -8,7 +8,7 @@ interface UserDocument extends Document {
   password: string;
   profilePicture: string;
   phoneNumber: string;
-  country: string;
+  countryCode: string;
   state: string;
   city: string;
   address: string;
@@ -46,10 +46,10 @@ const UserSchema = new mongoose.Schema<UserDocument>(
       required: false,
       default: "",
     },
-    country: {
+    countryCode: {
       type: String,
       required: false,
-      default: "",
+      default: "US",
     },
     state: { type: String, required: false, default: "" },
     city: { type: String, required: false, default: "" },
@@ -75,8 +75,14 @@ UserSchema.methods.toJSON = function () {
 };
 
 UserSchema.pre("save", async function (next) {
-  const hashedPassword = bcrypt.hashSync(this.password, 10);
-  this.password = hashedPassword;
+  const user = this;
+
+  if (!user.isNew || !user.isModified("password")) {
+    return next();
+  }
+
+  const hashedPassword = bcrypt.hashSync(user.password, 10);
+  user.password = hashedPassword;
   next();
 });
 

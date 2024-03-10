@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.jwtVerify = exports.generateAuthToken = exports.cleanErrors = void 0;
+exports.wait = exports.jwtVerify = exports.generateAuthToken = exports.cleanErrors = void 0;
 const config_1 = require("../config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const cleanErrors = (errors) => {
@@ -31,3 +31,7 @@ const jwtVerify = (accessToken) => {
     return payload;
 };
 exports.jwtVerify = jwtVerify;
+const wait = async (delay) => {
+    await new Promise((resolve) => setTimeout(resolve, delay));
+};
+exports.wait = wait;

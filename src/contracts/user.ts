@@ -9,3 +9,12 @@ export interface RegisterPayload {
   email: string;
   password: string;
 }
+
+export interface UpdatePayload {
+  countryCode?: string;
+  phoneNumber?: string;
+  state?: string;
+  city?: string;
+  address?: string;
+  zipCode?: string;
+}

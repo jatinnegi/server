@@ -33,10 +33,10 @@ const UserSchema = new mongoose_1.default.Schema({
         required: false,
         default: "",
     },
-    country: {
+    countryCode: {
         type: String,
         required: false,
-        default: "",
+        default: "US",
     },
     state: { type: String, required: false, default: "" },
     city: { type: String, required: false, default: "" },
@@ -56,8 +56,12 @@ UserSchema.methods.toJSON = function () {
     return userObject;
 };
 UserSchema.pre("save", async function (next) {
-    const hashedPassword = bcrypt_1.default.hashSync(this.password, 10);
-    this.password = hashedPassword;
+    const user = this;
+    if (!user.isNew || !user.isModified("password")) {
+        return next();
+    }
+    const hashedPassword = bcrypt_1.default.hashSync(user.password, 10);
+    user.password = hashedPassword;
     next();
 });
 const UserModel = mongoose_1.default.model("User", UserSchema);

@@ -32,3 +32,11 @@ export const jwtVerify = (accessToken: string) => {
   ) as JWTUser;
   return payload;
 };
+
+/**
+ * Cause intentional delay before sending response. Used to test the loading UI for frontend.
+ * @param delay Delay time in milliseconds
+ */
+export const wait = async (delay: number) => {
+  await new Promise((resolve) => setTimeout(resolve, delay));
+};

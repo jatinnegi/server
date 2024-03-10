@@ -21,6 +21,7 @@ router.post(
   withValidation(UserRegisterValidation),
   userController.register
 );
+router.patch("/update", authGuards.isAuth, userController.update);
 router.post("/logout", authGuards.isAuth, userController.logout);
 
 export default router;

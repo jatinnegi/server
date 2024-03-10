@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { jwtVerify } from "@/utils";
-import UserModel from "@/models/User.model";
 import asyncHandler from "express-async-handler";
 import { isDevelopment } from "@/config";
 
@@ -14,8 +13,7 @@ export const authMiddleware = asyncHandler(
         if (!id) {
           next();
         } else {
-          const user = await UserModel.findById(id);
-          req.context = user;
+          req.context = id;
           next();
         }
       } else {

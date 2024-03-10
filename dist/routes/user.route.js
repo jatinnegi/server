@@ -31,5 +31,6 @@ const router = (0, express_1.Router)();
 router.get("/", authGuards.isAuth, userController.getUser);
 router.post("/login", authGuards.isGuest, (0, index_validators_1.default)(index_validators_1.UserLoginValidation), userController.login);
 router.post("/register", authGuards.isGuest, (0, index_validators_1.default)(index_validators_1.UserRegisterValidation), userController.register);
+router.patch("/update", authGuards.isAuth, userController.update);
 router.post("/logout", authGuards.isAuth, userController.logout);
 exports.default = router;

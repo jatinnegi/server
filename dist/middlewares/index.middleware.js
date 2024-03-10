@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandlerMiddleware = exports.notFoundMiddleware = exports.authMiddleware = void 0;
 const utils_1 = require("../utils");
-const User_model_1 = __importDefault(require("../models/User.model"));
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const config_1 = require("../config");
 exports.authMiddleware = (0, express_async_handler_1.default)(async (req, res, next) => {
@@ -17,8 +16,7 @@ exports.authMiddleware = (0, express_async_handler_1.default)(async (req, res, n
                 next();
             }
             else {
-                const user = await User_model_1.default.findById(id);
-                req.context = user;
+                req.context = id;
                 next();
             }
         }
